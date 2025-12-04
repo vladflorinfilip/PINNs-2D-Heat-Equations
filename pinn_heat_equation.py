@@ -169,7 +169,7 @@ class HeatEquationPINN:
         
         # Setup device
         if device is None:
-            self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+            self.device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
         else:
             self.device = torch.device(device)
         
@@ -371,7 +371,13 @@ class HeatEquationPINN:
             t_tensor = torch.tensor(t, dtype=torch.float32, device=self.device).reshape(-1, 1)
             
             u_tensor = self.model(x_tensor, y_tensor, t_tensor)
-            u = u_tensor.cpu().numpy().flatten()
+            # Convert to numpy with proper detaching
+            u_tensor = u_tensor.detach().cpu()
+            try:
+                u = u_tensor.numpy().flatten()
+            except RuntimeError:
+                # Fallback: convert via list if numpy conversion fails
+                u = np.array(u_tensor.tolist()).flatten()
         
         self.model.train()
         return u

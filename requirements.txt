@@ -1,7 +1,7 @@
 # Core dependencies for PINN implementation
 # Note: If torch installation fails, you may need Python 3.11 or 3.12
 torch>=2.0.0; python_version < '3.13'
-torch; python_version >= '3.13'
+torch>=2.0.0; python_version >= '3.13'
 numpy>=1.24.0
 matplotlib>=3.7.0
 
